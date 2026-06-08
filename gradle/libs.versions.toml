@@ -1,6 +1,18 @@
 [versions]
+springBoot = "4.0.6"
+exceptions-core = "v4"
+lombok-version = "1.18.46"
 
 [libraries]
+spring-boot-dependencies = { group = "org.springframework.boot", name = "spring-boot-dependencies", version.ref = "springBoot" }
+commons-exception-core = { group = "com.github.QillqaSoft", name = "commons-exception-core", version.ref = "exceptions-core" }
+lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok-version" }
+project-reactor = { group = "io.projectreactor", name = "reactor-core" }
+
+spring-beans = { group = "org.springframework", name = "spring-beans" }
+
+junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher" }
+project-reactor-test = { group = "io.projectreactor", name = "reactor-test" }
 
 [plugins]
 java-library = { id = "java-library" }

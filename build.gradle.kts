@@ -23,6 +23,18 @@ repositories {
 }
 
 dependencies {
+	api(platform(libs.spring.boot.dependencies))
+	implementation(libs.commons.exception.core)
+	implementation(libs.spring.beans)
+	implementation(libs.project.reactor)
+
+	compileOnly(libs.lombok)
+	annotationProcessor(libs.lombok)
+
+	testCompileOnly(libs.lombok)
+	testAnnotationProcessor(libs.lombok)
+	testRuntimeOnly(libs.junit.platform.launcher)
+	testImplementation(libs.project.reactor.test)
 }
 
 publishing {
@@ -31,7 +43,23 @@ publishing {
 			from(components["java"])
 			pom {
 				name.set("Ask Core")
-				description.set("Core library")
+				description.set("Core library for reactive microservices")
+				url.set("https://github.com/Ask-Library/ask-core")
+
+				licenses {
+					license {
+						name.set("The Apache License, Version 2.0")
+						url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+					}
+				}
+
+				developers {
+					developer {
+						id.set("AllanSagastegui")
+						name.set("Allan Sagastegui")
+						email.set("allxn.sxh@gmail.com")
+					}
+				}
 			}
 		}
 	}

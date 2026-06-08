@@ -1,0 +1,8 @@
+[versions]
+
+[libraries]
+
+[plugins]
+java-library = { id = "java-library" }
+maven-publish = { id = "maven-publish" }
+jacoco = { id = "jacoco" }

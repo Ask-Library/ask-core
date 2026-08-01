@@ -1,57 +1,55 @@
 package pe.ask.core.mapper.impl;
 
-import org.springframework.beans.BeanUtils;
 import pe.ask.core.exception.MapFailedException;
 import pe.ask.core.mapper.EntityMapper;
+import pe.ask.core.mapper.util.MapperUtils;
+import pe.ask.core.mapper.util.MapperUtils.PropertyCopier;
 
+import java.beans.IntrospectionException;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
+import java.util.List;
 
 /**
- * A highly optimized generic mapper for converting between domain models and database entities.
- * <p>
- * Implements {@link EntityMapper} and uses {@link java.lang.invoke.MethodHandles} to cache
- * constructors upon initialization, eliminating the overhead of runtime reflection.
- * Note: This default mapper requires public no-args constructors and does not support Java Records.
+ * A generic mapper for converting between domain models and database entities.
+ * <p> * Constructors and property accessors are resolved during initialization,
+ * avoiding repeated introspection during mapping operations.
  * </p>
- *
  * @param <D> the domain model type
  * @param <E> the entity model type
- *
  * @author Allan Sagastegui
  */
 public class GenericBeanMapper<D, E> implements EntityMapper<D, E> {
-
     private final MethodHandle domainConstructor;
     private final MethodHandle entityConstructor;
+    private final List<PropertyCopier> domainToEntityCopiers;
+    private final List<PropertyCopier> entityToDomainCopiers;
 
     /**
-     * Constructs a new GenericBeanMapper and caches the default constructors.
-     *
-     * @param domainClass the class of the domain model
-     * @param entityClass the class of the entity model
-     * @throws IllegalArgumentException if classes do not have a public no-args constructor
+     * Constructs a mapper and caches constructors and compatible properties.
+     * @param domainClass the domain model class
+     * @param entityClass the entity model class
+     * @throws MapFailedException if the mapper cannot be initialized
      */
     public GenericBeanMapper(Class<D> domainClass, Class<E> entityClass) {
-
         try {
             MethodHandles.Lookup lookup = MethodHandles.publicLookup();
-            this.domainConstructor = lookup.findConstructor(domainClass, MethodType.methodType(void.class));
-            this.entityConstructor = lookup.findConstructor(entityClass, MethodType.methodType(void.class));
-        } catch (NoSuchMethodException | IllegalAccessException e) {
-            throw MapFailedException.builder()
-                    .withMessage("Critical: Classes " + domainClass.getSimpleName() +
-                    " and " + entityClass.getSimpleName() + " must have a public no-args constructor. For Records, use a custom mapper like MapStruct.").build();
+            this.domainConstructor = MapperUtils.findNoArgsConstructor(domainClass, lookup);
+            this.entityConstructor = MapperUtils.findNoArgsConstructor(entityClass, lookup);
+            this.domainToEntityCopiers = MapperUtils.createPropertyCopiers(domainClass, entityClass, lookup);
+            this.entityToDomainCopiers = MapperUtils.createPropertyCopiers(entityClass, domainClass, lookup);
+        } catch (NoSuchMethodException | IllegalAccessException | IntrospectionException exception) {
+            throw mappingConfigurationException(
+                    "Classes %s and %s must have accessible public no-args constructors.".formatted(domainClass.getSimpleName(), entityClass.getSimpleName())
+            );
         }
     }
 
     /**
-     * Converts a domain model to an entity.
-     *
+     * Converts a domain model to an entity. *
      * @param domain the domain model to convert
-     * @return the resulting entity
-     * @throws MapFailedException if mapping fails
+     * @return the mapped entity, or {@code null} when the input is {@code null}
+     * @throws MapFailedException if the mapping operation fails
      */
     @Override
     @SuppressWarnings("unchecked")
@@ -61,19 +59,18 @@ public class GenericBeanMapper<D, E> implements EntityMapper<D, E> {
         }
         try {
             E entity = (E) entityConstructor.invoke();
-            BeanUtils.copyProperties(domain, entity);
+            MapperUtils.copyProperties(domain, entity, domainToEntityCopiers);
             return entity;
-        } catch (Throwable e) {
-            throw new MapFailedException();
+        } catch (Throwable exception) {
+            throw mappingExecutionException("Could not map domain object to entity.");
         }
     }
 
     /**
      * Converts an entity to a domain model.
-     *
      * @param entity the entity to convert
-     * @return the resulting domain model
-     * @throws MapFailedException if mapping fails
+     * @return the mapped domain model, or {@code null} when the input is {@code null}
+     * @throws MapFailedException if the mapping operation fails
      */
     @Override
     @SuppressWarnings("unchecked")
@@ -83,10 +80,18 @@ public class GenericBeanMapper<D, E> implements EntityMapper<D, E> {
         }
         try {
             D domain = (D) domainConstructor.invoke();
-            BeanUtils.copyProperties(entity, domain);
+            MapperUtils.copyProperties(entity, domain, entityToDomainCopiers);
             return domain;
-        } catch (Throwable e) {
-            throw new MapFailedException();
+        } catch (Throwable exception) {
+            throw mappingExecutionException("Could not map entity to domain object.");
         }
+    }
+
+    private static MapFailedException mappingConfigurationException(String message) {
+        return MapFailedException.builder().withMessage(message).build();
+    }
+
+    private static MapFailedException mappingExecutionException(String message) {
+        return MapFailedException.builder().withMessage(message).build();
     }
 }

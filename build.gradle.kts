@@ -26,9 +26,7 @@ repositories {
 }
 
 dependencies {
-	api(platform(libs.spring.boot.dependencies))
 	implementation(libs.ask.exception.core)
-	implementation(libs.spring.beans)
 	implementation(libs.project.reactor)
 
 	testRuntimeOnly(libs.junit.platform.launcher)

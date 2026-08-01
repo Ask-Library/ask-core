@@ -1,6 +1,6 @@
 pe.ask.core.constants
 pe.ask.core.exception
 pe.ask.core.mapper
-pe.ask.core.model.api
+pe.ask.core.mapper.impl
 pe.ask.core.model.pagination
 pe.ask.core.utils

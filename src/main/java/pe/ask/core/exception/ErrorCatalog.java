@@ -1,6 +1,7 @@
 package pe.ask.core.exception;
 
-import pe.quillqasoft.dev.core.catalog.BaseExceptionCatalog;
+
+import pe.ask.exception.core.catalog.BaseExceptionCatalog;
 
 import java.util.Map;
 

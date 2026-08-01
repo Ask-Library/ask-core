@@ -1,12 +1,11 @@
 [versions]
 springBoot = "4.0.6"
-exceptions-core = "v4"
-lombok-version = "1.18.46"
+ask-exceptions-core-v = "v1.0.0"
+freefair-lombok = "9.5.0"
 
 [libraries]
 spring-boot-dependencies = { group = "org.springframework.boot", name = "spring-boot-dependencies", version.ref = "springBoot" }
-commons-exception-core = { group = "com.github.QillqaSoft", name = "commons-exception-core", version.ref = "exceptions-core" }
-lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok-version" }
+ask-exception-core = { group = "com.github.Ask-Library", name = "ask-exception-core", version.ref = "ask-exceptions-core-v" }
 project-reactor = { group = "io.projectreactor", name = "reactor-core" }
 
 spring-beans = { group = "org.springframework", name = "spring-beans" }
@@ -18,3 +17,4 @@ project-reactor-test = { group = "io.projectreactor", name = "reactor-test" }
 java-library = { id = "java-library" }
 maven-publish = { id = "maven-publish" }
 jacoco = { id = "jacoco" }
+freefair-lombok = { id = "io.freefair.lombok", version.ref = "freefair-lombok" }

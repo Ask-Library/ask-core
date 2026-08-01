@@ -1,7 +1,8 @@
 package pe.ask.core.exception;
 
-import pe.quillqasoft.dev.core.annotation.ExceptionDef;
-import pe.quillqasoft.dev.core.model.BaseException;
+
+import pe.ask.exception.core.annotation.ExceptionDef;
+import pe.ask.exception.core.model.BaseException;
 
 /**
  * Exception thrown when mapping between a domain object and an entity fails.

@@ -1,5 +1,5 @@
 [versions]
-ask-exceptions-core-v = "v1.0.0"
+ask-exceptions-core-v = "1.0.3"
 reactor-version = "3.8.6"
 freefair-lombok = "9.5.0"
 

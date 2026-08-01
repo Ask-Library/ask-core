@@ -1,75 +1,71 @@
 package pe.ask.core.mapper.impl;
 
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
 import pe.ask.core.exception.MapFailedException;
 import pe.ask.core.mapper.DtoMapper;
+import pe.ask.core.mapper.util.MapperUtils;
+import pe.ask.core.mapper.util.MapperUtils.PropertyCopier;
+import pe.ask.core.mapper.util.MapperUtils.RecordArgumentReader;
 
+import java.beans.IntrospectionException;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.RecordComponent;
-import java.util.Arrays;
+import java.util.List;
 
 /**
- * Generic and optimized implementation for mapping between Domain and DTOs/Records.
- * <p>
- * Features:
- * <ul>
- * <li>For traditional POJOs: Uses {@link java.lang.invoke.MethodHandles} to achieve
- * near-native performance.</li>
- * <li>For Java Records: Automatically detects if the DTO is a Record and resolves its
- * canonical constructor dynamically.</li>
- * </ul>
- *
- * @param <D> The Domain model (Source - must be a POJO with a no-args constructor)
- * @param <R> The exposition DTO (Destination - can be a POJO or Record)
- *
+ * Generic mapper for converting between domain models and DTOs.
+ * <p> * The DTO can be a mutable POJO with a public no-args constructor
+ * or a Java Record with an accessible canonical constructor.
+ * </p>
+ * @param <D> the domain model type * @param <R> the DTO type
  * @author Allan Sagastegui
  */
 public class GenericDtoMapper<D, R> implements DtoMapper<D, R> {
-
     private final MethodHandle domainConstructor;
-    private MethodHandle dtoConstructor;
-
-    private final boolean isDtoRecord;
-    private Constructor<R> dtoRecordConstructor;
-    private RecordComponent[] dtoRecordComponents;
+    private final MethodHandle dtoConstructor;
+    private final boolean dtoRecord;
+    private final List<PropertyCopier> domainToDtoCopiers;
+    private final List<PropertyCopier> dtoToDomainCopiers;
+    private final List<RecordArgumentReader> dtoRecordReaders;
 
     /**
-     * Constructs a new GenericDtoMapper.
-     *
-     * @param domainClass the class of the domain model
-     * @param dtoClass the class of the DTO
+     * Creates a mapper and caches its constructors and property accessors.
+     * @param domainClass the domain model class
+     * @param dtoClass the DTO class
+     * @throws MapFailedException if the mapper cannot be initialized
      */
     public GenericDtoMapper(Class<D> domainClass, Class<R> dtoClass) {
-        this.isDtoRecord = dtoClass.isRecord();
-
+        this.dtoRecord = dtoClass.isRecord();
         try {
             MethodHandles.Lookup lookup = MethodHandles.publicLookup();
-
-            this.domainConstructor = lookup.findConstructor(domainClass, MethodType.methodType(void.class));
-
-            if (isDtoRecord) {
-                this.dtoRecordComponents = dtoClass.getRecordComponents();
-                Class<?>[] paramTypes = Arrays.stream(this.dtoRecordComponents)
-                        .map(RecordComponent::getType)
-                        .toArray(Class<?>[]::new);
-                this.dtoRecordConstructor = dtoClass.getDeclaredConstructor(paramTypes);
+            this.domainConstructor = MapperUtils.findNoArgsConstructor(domainClass, lookup);
+            if (dtoRecord) {
+                RecordComponent[] components = dtoClass.getRecordComponents();
+                this.dtoConstructor = MapperUtils.findRecordConstructor(dtoClass, lookup);
+                this.dtoRecordReaders = MapperUtils.createRecordArgumentReaders(domainClass, components, lookup);
+                this.domainToDtoCopiers = List.of();
             } else {
-                this.dtoConstructor = lookup.findConstructor(dtoClass, MethodType.methodType(void.class));
+                this.dtoConstructor = MapperUtils.findNoArgsConstructor(dtoClass, lookup);
+                this.domainToDtoCopiers = MapperUtils.createPropertyCopiers(domainClass, dtoClass, lookup);
+                this.dtoRecordReaders = List.of();
             }
-
-        } catch (NoSuchMethodException | IllegalAccessException e) {
+            this.dtoToDomainCopiers = MapperUtils.createPropertyCopiers(dtoClass, domainClass, lookup);
+        } catch (NoSuchMethodException | IllegalAccessException | IntrospectionException exception) {
             throw MapFailedException.builder()
-                    .withMessage(String.format("Error initializing mapper. Domain: '%s' must have an empty constructor. " +
-                            "DTO: '%s' must have an empty constructor or be a valid Record.",
-                    domainClass.getSimpleName(), dtoClass.getSimpleName())).build();
+                    .withMessage(
+                            "Error initializing mapper. Domain '%s' must have a public no-args constructor. ".formatted(domainClass.getSimpleName())
+                                    + "DTO '%s' must have a public no-args constructor or be a public Record.".formatted(dtoClass.getSimpleName())
+                    )
+                    .build();
         }
     }
 
+    /**
+     * Converts a domain model into a DTO.
+     * @param domain the domain model to convert
+     * @return the mapped DTO, or {@code null} when the input is {@code null}
+     * @throws MapFailedException if the mapping operation fails
+     */
     @Override
     @SuppressWarnings("unchecked")
     public R toDto(D domain) {
@@ -77,27 +73,26 @@ public class GenericDtoMapper<D, R> implements DtoMapper<D, R> {
             return null;
         }
         try {
-            if (isDtoRecord) {
-                BeanWrapper domainWrapper = new BeanWrapperImpl(domain);
-                Object[] constructorArgs = new Object[dtoRecordComponents.length];
-
-                for (int i = 0; i < dtoRecordComponents.length; i++) {
-                    String fieldName = dtoRecordComponents[i].getName();
-                    if (domainWrapper.isReadableProperty(fieldName)) {
-                        constructorArgs[i] = domainWrapper.getPropertyValue(fieldName);
-                    }
-                }
-                return dtoRecordConstructor.newInstance(constructorArgs);
-            } else {
-                R dto = (R) dtoConstructor.invoke();
-                BeanUtils.copyProperties(domain, dto);
-                return dto;
+            if (dtoRecord) {
+                Object[] arguments = MapperUtils.readRecordArguments(domain, dtoRecordReaders);
+                return (R) dtoConstructor.invokeWithArguments(arguments);
             }
-        } catch (Throwable e) {
-            throw new MapFailedException();
+            R dto = (R) dtoConstructor.invoke();
+            MapperUtils.copyProperties(domain, dto, domainToDtoCopiers);
+            return dto;
+        } catch (Throwable exception) {
+            throw MapFailedException.builder()
+                    .withMessage("Failed to map domain model '%s' to DTO.".formatted(domain.getClass().getSimpleName()))
+                    .build();
         }
     }
 
+    /**
+     * Converts a DTO into a domain model.
+     * @param dto the DTO to convert
+     * @return the mapped domain model, or {@code null} when the input is {@code null}
+     * @throws MapFailedException if the mapping operation fails
+     */
     @Override
     @SuppressWarnings("unchecked")
     public D toDomain(R dto) {
@@ -106,10 +101,12 @@ public class GenericDtoMapper<D, R> implements DtoMapper<D, R> {
         }
         try {
             D domain = (D) domainConstructor.invoke();
-            BeanUtils.copyProperties(dto, domain);
+            MapperUtils.copyProperties(dto, domain, dtoToDomainCopiers);
             return domain;
-        } catch (Throwable e) {
-            throw new MapFailedException();
+        } catch (Throwable exception) {
+            throw MapFailedException.builder()
+                    .withMessage("Failed to map DTO '%s' to domain model.".formatted(dto.getClass().getSimpleName()))
+                    .build();
         }
     }
 }

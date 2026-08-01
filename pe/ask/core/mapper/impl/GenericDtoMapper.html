@@ -90,8 +90,7 @@ loadScripts(document, 'script');</script>
 <section class="class-description" id="class-description">
 <dl class="notes">
 <dt>Type Parameters:</dt>
-<dd><code>D</code> - The Domain model (Source - must be a POJO with a no-args constructor)</dd>
-<dd><code>R</code> - The exposition DTO (Destination - can be a POJO or Record)</dd>
+<dd><code>D</code> - the domain model type * @param <R> the DTO type</dd>
 </dl>
 <dl class="notes">
 <dt>All Implemented Interfaces:</dt>
@@ -101,15 +100,10 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">GenericDtoMapper&lt;D,<wbr>R&gt;</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
 implements <a href="../DtoMapper.html" title="interface in pe.ask.core.mapper">DtoMapper</a>&lt;D,<wbr>R&gt;</span></div>
-<div class="block">Generic and optimized implementation for mapping between Domain and DTOs/Records.
- <p>
- Features:
- <ul>
- <li>For traditional POJOs: Uses <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/invoke/MethodHandles.html" title="class or interface in java.lang.invoke" class="external-link"><code>MethodHandles</code></a> to achieve
- near-native performance.</li>
- <li>For Java Records: Automatically detects if the DTO is a Record and resolves its
- canonical constructor dynamically.</li>
- </ul></div>
+<div class="block">Generic mapper for converting between domain models and DTOs.
+ <p> * The DTO can be a mutable POJO with a public no-args constructor
+ or a Java Record with an accessible canonical constructor.
+ </p></div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -124,7 +118,7 @@ implements <a href="../DtoMapper.html" title="interface in pe.ask.core.mapper">D
 <div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(java.lang.Class,java.lang.Class)" class="member-name-link">GenericDtoMapper</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;<a href="GenericDtoMapper.html" title="type parameter in GenericDtoMapper">D</a>&gt;&nbsp;domainClass,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;<a href="GenericDtoMapper.html" title="type parameter in GenericDtoMapper">R</a>&gt;&nbsp;dtoClass)</code></div>
 <div class="col-last even-row-color">
-<div class="block">Constructs a new GenericDtoMapper.</div>
+<div class="block">Creates a mapper and caches its constructors and property accessors.</div>
 </div>
 </div>
 </section>
@@ -143,12 +137,12 @@ implements <a href="../DtoMapper.html" title="interface in pe.ask.core.mapper">D
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="GenericDtoMapper.html" title="type parameter in GenericDtoMapper">D</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toDomain(R)" class="member-name-link">toDomain</a><wbr>(<a href="GenericDtoMapper.html" title="type parameter in GenericDtoMapper">R</a>&nbsp;dto)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Converts an incoming Record/DTO (request) into a domain model.</div>
+<div class="block">Converts a DTO into a domain model.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="GenericDtoMapper.html" title="type parameter in GenericDtoMapper">R</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toDto(D)" class="member-name-link">toDto</a><wbr>(<a href="GenericDtoMapper.html" title="type parameter in GenericDtoMapper">D</a>&nbsp;domain)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Converts a domain model into a Record/DTO for the API response.</div>
+<div class="block">Converts a domain model into a DTO.</div>
 </div>
 </div>
 </div>
@@ -172,11 +166,13 @@ implements <a href="../DtoMapper.html" title="interface in pe.ask.core.mapper">D
 <h3>GenericDtoMapper</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">GenericDtoMapper</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;<a href="GenericDtoMapper.html" title="type parameter in GenericDtoMapper">D</a>&gt;&nbsp;domainClass,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;<a href="GenericDtoMapper.html" title="type parameter in GenericDtoMapper">R</a>&gt;&nbsp;dtoClass)</span></div>
-<div class="block">Constructs a new GenericDtoMapper.</div>
+<div class="block">Creates a mapper and caches its constructors and property accessors.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>domainClass</code> - the class of the domain model</dd>
-<dd><code>dtoClass</code> - the class of the DTO</dd>
+<dd><code>domainClass</code> - the domain model class</dd>
+<dd><code>dtoClass</code> - the DTO class</dd>
+<dt>Throws:</dt>
+<dd><code><a href="../../exception/MapFailedException.html" title="class in pe.ask.core.exception">MapFailedException</a></code> - if the mapper cannot be initialized</dd>
 </dl>
 </section>
 </li>
@@ -192,15 +188,16 @@ implements <a href="../DtoMapper.html" title="interface in pe.ask.core.mapper">D
 <section class="detail" id="toDto(D)">
 <h3 id="toDto(java.lang.Object)">toDto</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="GenericDtoMapper.html" title="type parameter in GenericDtoMapper">R</a></span>&nbsp;<span class="element-name">toDto</span><wbr><span class="parameters">(<a href="GenericDtoMapper.html" title="type parameter in GenericDtoMapper">D</a>&nbsp;domain)</span></div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../DtoMapper.html#toDto(D)">DtoMapper</a></code></span></div>
-<div class="block">Converts a domain model into a Record/DTO for the API response.</div>
+<div class="block">Converts a domain model into a DTO.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="../DtoMapper.html#toDto(D)">toDto</a></code>&nbsp;in interface&nbsp;<code><a href="../DtoMapper.html" title="interface in pe.ask.core.mapper">DtoMapper</a>&lt;<a href="GenericDtoMapper.html" title="type parameter in GenericDtoMapper">D</a>,<wbr><a href="GenericDtoMapper.html" title="type parameter in GenericDtoMapper">R</a>&gt;</code></dd>
 <dt>Parameters:</dt>
 <dd><code>domain</code> - the domain model to convert</dd>
 <dt>Returns:</dt>
-<dd>the resulting DTO</dd>
+<dd>the mapped DTO, or <code>null</code> when the input is <code>null</code></dd>
+<dt>Throws:</dt>
+<dd><code><a href="../../exception/MapFailedException.html" title="class in pe.ask.core.exception">MapFailedException</a></code> - if the mapping operation fails</dd>
 </dl>
 </section>
 </li>
@@ -208,15 +205,16 @@ implements <a href="../DtoMapper.html" title="interface in pe.ask.core.mapper">D
 <section class="detail" id="toDomain(R)">
 <h3 id="toDomain(java.lang.Object)">toDomain</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="GenericDtoMapper.html" title="type parameter in GenericDtoMapper">D</a></span>&nbsp;<span class="element-name">toDomain</span><wbr><span class="parameters">(<a href="GenericDtoMapper.html" title="type parameter in GenericDtoMapper">R</a>&nbsp;dto)</span></div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../DtoMapper.html#toDomain(R)">DtoMapper</a></code></span></div>
-<div class="block">Converts an incoming Record/DTO (request) into a domain model.</div>
+<div class="block">Converts a DTO into a domain model.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="../DtoMapper.html#toDomain(R)">toDomain</a></code>&nbsp;in interface&nbsp;<code><a href="../DtoMapper.html" title="interface in pe.ask.core.mapper">DtoMapper</a>&lt;<a href="GenericDtoMapper.html" title="type parameter in GenericDtoMapper">D</a>,<wbr><a href="GenericDtoMapper.html" title="type parameter in GenericDtoMapper">R</a>&gt;</code></dd>
 <dt>Parameters:</dt>
 <dd><code>dto</code> - the DTO to convert</dd>
 <dt>Returns:</dt>
-<dd>the resulting domain model</dd>
+<dd>the mapped domain model, or <code>null</code> when the input is <code>null</code></dd>
+<dt>Throws:</dt>
+<dd><code><a href="../../exception/MapFailedException.html" title="class in pe.ask.core.exception">MapFailedException</a></code> - if the mapping operation fails</dd>
 </dl>
 </section>
 </li>

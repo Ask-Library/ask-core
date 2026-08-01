@@ -50,7 +50,7 @@ loadScripts(document, 'script');</script>
 <h1 title="All Classes and Interfaces" class="title">All Classes and Interfaces</h1>
 </div>
 <div id="all-classes-table">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="all-classes-table-tab0" role="tab" aria-selected="true" aria-controls="all-classes-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('all-classes-table', 'all-classes-table', 2)" class="active-table-tab">All Classes and Interfaces</button><button id="all-classes-table-tab1" role="tab" aria-selected="false" aria-controls="all-classes-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('all-classes-table', 'all-classes-table-tab1', 2)" class="table-tab">Interfaces</button><button id="all-classes-table-tab2" role="tab" aria-selected="false" aria-controls="all-classes-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('all-classes-table', 'all-classes-table-tab2', 2)" class="table-tab">Classes</button><button id="all-classes-table-tab3" role="tab" aria-selected="false" aria-controls="all-classes-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('all-classes-table', 'all-classes-table-tab3', 2)" class="table-tab">Enum Classes</button><button id="all-classes-table-tab5" role="tab" aria-selected="false" aria-controls="all-classes-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('all-classes-table', 'all-classes-table-tab5', 2)" class="table-tab">Exception Classes</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="all-classes-table-tab0" role="tab" aria-selected="true" aria-controls="all-classes-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('all-classes-table', 'all-classes-table', 2)" class="active-table-tab">All Classes and Interfaces</button><button id="all-classes-table-tab1" role="tab" aria-selected="false" aria-controls="all-classes-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('all-classes-table', 'all-classes-table-tab1', 2)" class="table-tab">Interfaces</button><button id="all-classes-table-tab2" role="tab" aria-selected="false" aria-controls="all-classes-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('all-classes-table', 'all-classes-table-tab2', 2)" class="table-tab">Classes</button><button id="all-classes-table-tab3" role="tab" aria-selected="false" aria-controls="all-classes-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('all-classes-table', 'all-classes-table-tab3', 2)" class="table-tab">Enum Classes</button><button id="all-classes-table-tab4" role="tab" aria-selected="false" aria-controls="all-classes-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('all-classes-table', 'all-classes-table-tab4', 2)" class="table-tab">Record Classes</button><button id="all-classes-table-tab5" role="tab" aria-selected="false" aria-controls="all-classes-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('all-classes-table', 'all-classes-table-tab5', 2)" class="table-tab">Exception Classes</button></div>
 <div id="all-classes-table.tabpanel" role="tabpanel" aria-labelledby="all-classes-table-tab0">
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Class</div>
@@ -69,34 +69,46 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="pe/ask/core/mapper/impl/GenericBeanMapper.html" title="class in pe.ask.core.mapper.impl">GenericBeanMapper&lt;D,<wbr>E&gt;</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
-<div class="block">A highly optimized generic mapper for converting between domain models and database entities.</div>
+<div class="block">A generic mapper for converting between domain models and database entities.</div>
 </div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="pe/ask/core/mapper/impl/GenericDtoMapper.html" title="class in pe.ask.core.mapper.impl">GenericDtoMapper&lt;D,<wbr>R&gt;</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
-<div class="block">Generic and optimized implementation for mapping between Domain and DTOs/Records.</div>
+<div class="block">Generic mapper for converting between domain models and DTOs.</div>
 </div>
 <div class="col-first odd-row-color all-classes-table all-classes-table-tab5"><a href="pe/ask/core/exception/MapFailedException.html" title="class in pe.ask.core.exception">MapFailedException</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab5">
 <div class="block">Exception thrown when mapping between a domain object and an entity fails.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="pe/ask/core/model/pagination/PageRequest.html" title="class in pe.ask.core.model.pagination">PageRequest</a></div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="pe/ask/core/mapper/util/MapperUtils.html" title="class in pe.ask.core.mapper.util">MapperUtils</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="block">Utility methods used by reflection-based mappers.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab4"><a href="pe/ask/core/mapper/util/MapperUtils.PropertyCopier.html" title="class in pe.ask.core.mapper.util">MapperUtils.PropertyCopier</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab4">
+<div class="block">Defines a cached property reader and writer.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="pe/ask/core/mapper/util/MapperUtils.RecordArgumentReader.html" title="class in pe.ask.core.mapper.util">MapperUtils.RecordArgumentReader</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab4">
+<div class="block">Defines a reader for a Record constructor argument.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="pe/ask/core/model/pagination/PageRequest.html" title="class in pe.ask.core.model.pagination">PageRequest</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Represents a request for paginated data.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="pe/ask/core/model/pagination/PageRequest.PageRequestBuilder.html" title="class in pe.ask.core.model.pagination">PageRequest.PageRequestBuilder</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="pe/ask/core/model/pagination/PageResponse.html" title="class in pe.ask.core.model.pagination">PageResponse&lt;T&gt;</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="pe/ask/core/model/pagination/PageRequest.PageRequestBuilder.html" title="class in pe.ask.core.model.pagination">PageRequest.PageRequestBuilder</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="pe/ask/core/model/pagination/PageResponse.html" title="class in pe.ask.core.model.pagination">PageResponse&lt;T&gt;</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Represents a paginated response containing a list of items and pagination metadata.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="pe/ask/core/model/pagination/PageResponse.PageResponseBuilder.html" title="class in pe.ask.core.model.pagination">PageResponse.PageResponseBuilder&lt;T&gt;</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="pe/ask/core/utils/ReactivePaginationUtil.html" title="class in pe.ask.core.utils">ReactivePaginationUtil</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="pe/ask/core/model/pagination/PageResponse.PageResponseBuilder.html" title="class in pe.ask.core.model.pagination">PageResponse.PageResponseBuilder&lt;T&gt;</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="pe/ask/core/utils/ReactivePaginationUtil.html" title="class in pe.ask.core.utils">ReactivePaginationUtil</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Utility for managing reactive pagination in Spring Data R2DBC.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab3"><a href="pe/ask/core/constants/Status.html" title="enum class in pe.ask.core.constants">Status</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab3">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab3"><a href="pe/ask/core/constants/Status.html" title="enum class in pe.ask.core.constants">Status</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab3">
 <div class="block">Standard status catalog for API responses.</div>
 </div>
 </div>

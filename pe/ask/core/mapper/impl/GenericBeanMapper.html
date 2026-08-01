@@ -101,11 +101,9 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">GenericBeanMapper&lt;D,<wbr>E&gt;</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
 implements <a href="../EntityMapper.html" title="interface in pe.ask.core.mapper">EntityMapper</a>&lt;D,<wbr>E&gt;</span></div>
-<div class="block">A highly optimized generic mapper for converting between domain models and database entities.
- <p>
- Implements <a href="../EntityMapper.html" title="interface in pe.ask.core.mapper"><code>EntityMapper</code></a> and uses <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/invoke/MethodHandles.html" title="class or interface in java.lang.invoke" class="external-link"><code>MethodHandles</code></a> to cache
- constructors upon initialization, eliminating the overhead of runtime reflection.
- Note: This default mapper requires public no-args constructors and does not support Java Records.
+<div class="block">A generic mapper for converting between domain models and database entities.
+ <p> * Constructors and property accessors are resolved during initialization,
+ avoiding repeated introspection during mapping operations.
  </p></div>
 </section>
 <section class="summary">
@@ -121,7 +119,7 @@ implements <a href="../EntityMapper.html" title="interface in pe.ask.core.mapper
 <div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(java.lang.Class,java.lang.Class)" class="member-name-link">GenericBeanMapper</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;<a href="GenericBeanMapper.html" title="type parameter in GenericBeanMapper">D</a>&gt;&nbsp;domainClass,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;<a href="GenericBeanMapper.html" title="type parameter in GenericBeanMapper">E</a>&gt;&nbsp;entityClass)</code></div>
 <div class="col-last even-row-color">
-<div class="block">Constructs a new GenericBeanMapper and caches the default constructors.</div>
+<div class="block">Constructs a mapper and caches constructors and compatible properties.</div>
 </div>
 </div>
 </section>
@@ -169,13 +167,13 @@ implements <a href="../EntityMapper.html" title="interface in pe.ask.core.mapper
 <h3>GenericBeanMapper</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">GenericBeanMapper</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;<a href="GenericBeanMapper.html" title="type parameter in GenericBeanMapper">D</a>&gt;&nbsp;domainClass,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;<a href="GenericBeanMapper.html" title="type parameter in GenericBeanMapper">E</a>&gt;&nbsp;entityClass)</span></div>
-<div class="block">Constructs a new GenericBeanMapper and caches the default constructors.</div>
+<div class="block">Constructs a mapper and caches constructors and compatible properties.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>domainClass</code> - the class of the domain model</dd>
-<dd><code>entityClass</code> - the class of the entity model</dd>
+<dd><code>domainClass</code> - the domain model class</dd>
+<dd><code>entityClass</code> - the entity model class</dd>
 <dt>Throws:</dt>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if classes do not have a public no-args constructor</dd>
+<dd><code><a href="../../exception/MapFailedException.html" title="class in pe.ask.core.exception">MapFailedException</a></code> - if the mapper cannot be initialized</dd>
 </dl>
 </section>
 </li>
@@ -191,16 +189,16 @@ implements <a href="../EntityMapper.html" title="interface in pe.ask.core.mapper
 <section class="detail" id="toEntity(D)">
 <h3 id="toEntity(java.lang.Object)">toEntity</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="GenericBeanMapper.html" title="type parameter in GenericBeanMapper">E</a></span>&nbsp;<span class="element-name">toEntity</span><wbr><span class="parameters">(<a href="GenericBeanMapper.html" title="type parameter in GenericBeanMapper">D</a>&nbsp;domain)</span></div>
-<div class="block">Converts a domain model to an entity.</div>
+<div class="block">Converts a domain model to an entity. *</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="../EntityMapper.html#toEntity(D)">toEntity</a></code>&nbsp;in interface&nbsp;<code><a href="../EntityMapper.html" title="interface in pe.ask.core.mapper">EntityMapper</a>&lt;<a href="GenericBeanMapper.html" title="type parameter in GenericBeanMapper">D</a>,<wbr><a href="GenericBeanMapper.html" title="type parameter in GenericBeanMapper">E</a>&gt;</code></dd>
 <dt>Parameters:</dt>
 <dd><code>domain</code> - the domain model to convert</dd>
 <dt>Returns:</dt>
-<dd>the resulting entity</dd>
+<dd>the mapped entity, or <code>null</code> when the input is <code>null</code></dd>
 <dt>Throws:</dt>
-<dd><code><a href="../../exception/MapFailedException.html" title="class in pe.ask.core.exception">MapFailedException</a></code> - if mapping fails</dd>
+<dd><code><a href="../../exception/MapFailedException.html" title="class in pe.ask.core.exception">MapFailedException</a></code> - if the mapping operation fails</dd>
 </dl>
 </section>
 </li>
@@ -215,9 +213,9 @@ implements <a href="../EntityMapper.html" title="interface in pe.ask.core.mapper
 <dt>Parameters:</dt>
 <dd><code>entity</code> - the entity to convert</dd>
 <dt>Returns:</dt>
-<dd>the resulting domain model</dd>
+<dd>the mapped domain model, or <code>null</code> when the input is <code>null</code></dd>
 <dt>Throws:</dt>
-<dd><code><a href="../../exception/MapFailedException.html" title="class in pe.ask.core.exception">MapFailedException</a></code> - if mapping fails</dd>
+<dd><code><a href="../../exception/MapFailedException.html" title="class in pe.ask.core.exception">MapFailedException</a></code> - if the mapping operation fails</dd>
 </dl>
 </section>
 </li>

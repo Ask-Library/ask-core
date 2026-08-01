@@ -1,9 +1,10 @@
-package pe.ask.core.mapper;
+package pe.ask.core.mapper.impl;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import pe.ask.core.exception.MapFailedException;
+import pe.ask.core.mapper.DtoMapper;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -30,13 +31,7 @@ import java.util.Arrays;
  */
 public class GenericDtoMapper<D, R> implements DtoMapper<D, R> {
 
-    @SuppressWarnings("unused")
-    private final Class<D> domainClass;
-
-    @SuppressWarnings("unused")
-    private final Class<R> dtoClass;
-
-    private MethodHandle domainConstructor;
+    private final MethodHandle domainConstructor;
     private MethodHandle dtoConstructor;
 
     private final boolean isDtoRecord;
@@ -50,8 +45,6 @@ public class GenericDtoMapper<D, R> implements DtoMapper<D, R> {
      * @param dtoClass the class of the DTO
      */
     public GenericDtoMapper(Class<D> domainClass, Class<R> dtoClass) {
-        this.domainClass = domainClass;
-        this.dtoClass = dtoClass;
         this.isDtoRecord = dtoClass.isRecord();
 
         try {
@@ -70,7 +63,8 @@ public class GenericDtoMapper<D, R> implements DtoMapper<D, R> {
             }
 
         } catch (NoSuchMethodException | IllegalAccessException e) {
-            throw MapFailedException.builder().withMessage(String.format("Error initializing mapper. Domain: '%s' must have an empty constructor. " +
+            throw MapFailedException.builder()
+                    .withMessage(String.format("Error initializing mapper. Domain: '%s' must have an empty constructor. " +
                             "DTO: '%s' must have an empty constructor or be a valid Record.",
                     domainClass.getSimpleName(), dtoClass.getSimpleName())).build();
         }

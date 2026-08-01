@@ -1,7 +1,10 @@
+import org.gradle.external.javadoc.StandardJavadocDocletOptions
+
 plugins {
 	alias(libs.plugins.java.library)
 	alias(libs.plugins.maven.publish)
 	alias(libs.plugins.jacoco)
+	alias(libs.plugins.freefair.lombok)
 }
 
 group = "pe.ask"
@@ -24,15 +27,10 @@ repositories {
 
 dependencies {
 	api(platform(libs.spring.boot.dependencies))
-	implementation(libs.commons.exception.core)
+	implementation(libs.ask.exception.core)
 	implementation(libs.spring.beans)
 	implementation(libs.project.reactor)
 
-	compileOnly(libs.lombok)
-	annotationProcessor(libs.lombok)
-
-	testCompileOnly(libs.lombok)
-	testAnnotationProcessor(libs.lombok)
 	testRuntimeOnly(libs.junit.platform.launcher)
 	testImplementation(libs.project.reactor.test)
 }
@@ -76,5 +74,16 @@ tasks.jacocoTestReport {
 	reports {
 		xml.required.set(true)
 		html.required.set(true)
+	}
+}
+
+tasks.withType<Javadoc>().configureEach {
+	isFailOnError = false
+
+	(options as StandardJavadocDocletOptions).apply {
+		addStringOption("Xdoclint:none", "-quiet")
+		encoding = "UTF-8"
+		charSet = "UTF-8"
+		docEncoding = "UTF-8"
 	}
 }

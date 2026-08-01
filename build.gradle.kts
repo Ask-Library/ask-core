@@ -1,3 +1,5 @@
+import org.gradle.external.javadoc.StandardJavadocDocletOptions
+
 plugins {
 	alias(libs.plugins.java.library)
 	alias(libs.plugins.maven.publish)
@@ -72,5 +74,16 @@ tasks.jacocoTestReport {
 	reports {
 		xml.required.set(true)
 		html.required.set(true)
+	}
+}
+
+tasks.withType<Javadoc>().configureEach {
+	isFailOnError = false
+
+	(options as StandardJavadocDocletOptions).apply {
+		addStringOption("Xdoclint:none", "-quiet")
+		encoding = "UTF-8"
+		charSet = "UTF-8"
+		docEncoding = "UTF-8"
 	}
 }

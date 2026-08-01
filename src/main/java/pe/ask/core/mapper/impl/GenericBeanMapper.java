@@ -1,7 +1,8 @@
-package pe.ask.core.mapper;
+package pe.ask.core.mapper.impl;
 
 import org.springframework.beans.BeanUtils;
 import pe.ask.core.exception.MapFailedException;
+import pe.ask.core.mapper.EntityMapper;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -22,9 +23,6 @@ import java.lang.invoke.MethodType;
  */
 public class GenericBeanMapper<D, E> implements EntityMapper<D, E> {
 
-    private final Class<D> domainClass;
-    private final Class<E> entityClass;
-
     private final MethodHandle domainConstructor;
     private final MethodHandle entityConstructor;
 
@@ -36,16 +34,15 @@ public class GenericBeanMapper<D, E> implements EntityMapper<D, E> {
      * @throws IllegalArgumentException if classes do not have a public no-args constructor
      */
     public GenericBeanMapper(Class<D> domainClass, Class<E> entityClass) {
-        this.domainClass = domainClass;
-        this.entityClass = entityClass;
 
         try {
             MethodHandles.Lookup lookup = MethodHandles.publicLookup();
             this.domainConstructor = lookup.findConstructor(domainClass, MethodType.methodType(void.class));
             this.entityConstructor = lookup.findConstructor(entityClass, MethodType.methodType(void.class));
         } catch (NoSuchMethodException | IllegalAccessException e) {
-            throw new IllegalArgumentException("Critical: Classes " + domainClass.getSimpleName() +
-                    " and " + entityClass.getSimpleName() + " must have a public no-args constructor. For Records, use a custom mapper like MapStruct.", e);
+            throw MapFailedException.builder()
+                    .withMessage("Critical: Classes " + domainClass.getSimpleName() +
+                    " and " + entityClass.getSimpleName() + " must have a public no-args constructor. For Records, use a custom mapper like MapStruct.").build();
         }
     }
 

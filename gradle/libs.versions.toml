@@ -1,6 +1,6 @@
 [versions]
 ask-exceptions-core-v = "1.0.3"
-reactor-version = "3.8.6"
+reactor-version = "3.8.7"
 freefair-lombok = "9.5.0"
 
 [libraries]

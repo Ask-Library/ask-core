@@ -1,7 +1,7 @@
 [versions]
 ask-exceptions-core-v = "1.0.3"
 reactor-version = "3.8.6"
-freefair-lombok = "9.5.0"
+freefair-lombok = "9.7.0"
 
 [libraries]
 ask-exception-core = { group = "com.github.Ask-Library", name = "ask-exception-core", version.ref = "ask-exceptions-core-v" }
